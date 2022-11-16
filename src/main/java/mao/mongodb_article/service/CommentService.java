@@ -1,6 +1,7 @@
 package mao.mongodb_article.service;
 
 import mao.mongodb_article.entity.Comment;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -55,5 +56,22 @@ public interface CommentService
      */
     Comment findCommentById(String id);
 
+
+    /**
+     * 通过父id找到评论，分页
+     *
+     * @param parentId 父id
+     * @param page     页面号码
+     * @param size     页大小
+     * @return {@link Page}<{@link Comment}>
+     */
+    Page<Comment> findCommentPageByParentId(String parentId, int page, int size);
+
+    /**
+     * 点赞数量+1
+     *
+     * @param id id
+     */
+    void updateCommentLikeNum(String id);
 
 }

@@ -83,4 +83,15 @@ public class CommentController
     {
         commentService.deleteCommentById(id);
     }
+
+    /**
+     * 点赞数+1
+     *
+     * @param id id
+     */
+    @PutMapping("/likeNum/{id}")
+    public void updateCommentLikeNum(@PathVariable String id)
+    {
+        commentService.updateCommentLikeNum(id);
+    }
 }

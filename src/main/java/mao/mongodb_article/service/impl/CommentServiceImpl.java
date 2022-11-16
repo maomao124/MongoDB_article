@@ -4,6 +4,12 @@ import mao.mongodb_article.dao.CommentDao;
 import mao.mongodb_article.entity.Comment;
 import mao.mongodb_article.service.CommentService;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +32,9 @@ import java.util.Optional;
 @Service
 public class CommentServiceImpl implements CommentService
 {
+
+    @Resource
+    private MongoTemplate mongoTemplate;
 
     @Resource
     private CommentDao commentDao;
@@ -59,5 +68,21 @@ public class CommentServiceImpl implements CommentService
     {
         Optional<Comment> commentOptional = commentDao.findById(id);
         return commentOptional.orElse(null);
+    }
+
+    @Override
+    public Page<Comment> findCommentPageByParentId(String parentId, int page, int size)
+    {
+        return commentDao.findByParentId(parentId, PageRequest.of(page, size));
+    }
+
+    @Override
+    public void updateCommentLikeNum(String id)
+    {
+        //此方法不能先查询再更新，这样做就对MongoDB服务发起了两次请求，正常的一次网络io的时间大概在1-5毫秒左右，
+        //MongoDB服务对请求的处理时间可能远远小于此值
+        Update update = new Update();
+        update.inc("likeNum", 1);
+        mongoTemplate.updateFirst(Query.query(Criteria.where("_id").is(id)), update, Comment.class);
     }
 }
