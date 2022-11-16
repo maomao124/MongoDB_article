@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Project name(项目名称)：MongoDB_article
@@ -56,6 +57,7 @@ public class CommentServiceImpl implements CommentService
     @Override
     public Comment findCommentById(String id)
     {
-        return commentDao.findById(id).get();
+        Optional<Comment> commentOptional = commentDao.findById(id);
+        return commentOptional.orElse(null);
     }
 }
